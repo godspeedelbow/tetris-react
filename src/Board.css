@@ -1,0 +1,12 @@
+.Board {
+  text-align: center;
+}
+
+.Board .Row {
+  clear: both;
+}
+
+.Board .Cell {
+  width: 20px;
+  float: left;
+}
