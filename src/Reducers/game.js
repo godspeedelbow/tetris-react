@@ -100,9 +100,6 @@ export function tick() {
       board: {
         previous: board,
       },
-      block: {
-        current: block,
-      },
     } = getState();
 
     if (!board) {
