@@ -1,6 +1,7 @@
-import { addBlock, moveBlock } from './board';
+import { addBlock, moveBlock, removeCompletedRows } from './board';
 
 const initialGameState = {
+  score: 0,
   tickWait: 1000,
   playing: false,
 };
@@ -13,22 +14,28 @@ export default function gameReducer(state, action) {
     return {
       ...state,
       playing: true,
-    }
+    };
   }
   if (action.type === 'END_GAME') {
     return {
       ...state,
       playing: false,
-    }
+    };
   }
   if (action.type === 'SPEED_UP') {
     const { payload: { tickWait } } = action;
     return {
       ...state,
       tickWait,
-    }
+    };
   }
-
+  if (action.type === 'INCREASE_SCORE') {
+    const { payload: { score } } = action;
+    return {
+      ...state,
+      score: state.score + score,
+    };
+  }
   return state;
 }
 
@@ -71,10 +78,10 @@ export function speedUp() {
   };
 }
 
-export function increaseScore() {
+export function increaseScore(score) {
   return {
     type: 'INCREASE_SCORE',
-    score: 100,
+    payload: { score }
   };
 }
 
@@ -94,6 +101,10 @@ export function tick() {
     }
 
     if (!moveBlock('down')(dispatch, getState)) {
+      const removedRows = removeCompletedRows()(dispatch, getState);
+      if (removedRows > 0) {
+        dispatch(increaseScore(2 ** removedRows * 100));
+      }
       if (!addBlock()(dispatch, getState)) {
         console.log('GAME OVER');
         return dispatch(endGame());

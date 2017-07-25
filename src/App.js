@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import logo from './logo.svg';
 
 import Board from './Board';
+import Score from './Score';
 
 import {
   startGame,
@@ -25,7 +26,7 @@ class App extends Component {
     super(props);
 
     this.rows = 10;
-    this.columns = 10;
+    this.columns = 5;
 
     this.props.createBoard(this.rows, this.columns);
     this.props.startGame();
@@ -51,6 +52,7 @@ class App extends Component {
         <KeyHandler keyEventName={KEYDOWN} keyValue="ArrowUp" onKeyHandle={this.rotateBlock} />
         <KeyHandler keyEventName={KEYDOWN} keyValue=" " onKeyHandle={this.dropBlock} />
         <Board />
+        <Score />
       </div>
     );
   }

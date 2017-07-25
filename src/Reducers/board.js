@@ -2,6 +2,8 @@ import tetris, {
   blocks,
   canAddBlockToBoard,
   addBlockToBoard,
+  getCompletedRows,
+  removeRowsAndFill,
 } from 'tetrisjs';
 
 import range from 'lodash/range';
@@ -51,6 +53,14 @@ export default function boardReducer(state, action) {
     return {
       ...state,
       current: board,
+    }
+  }
+  if (action.type === 'REMOVE_ROW') {
+    const { board } = action.payload;
+    return {
+      ...state,
+      current: board,
+      previous: board,
     }
   }
 
@@ -186,6 +196,11 @@ export function rotateBlock() {
         column: blockCol
       }
     } = getState();
+
+    if (!block) {
+      return;
+    }
+
     const rotatedBlock = tetris.rotateBlock(block);
     if (!canAddBlockToBoard(previousBoard, rotatedBlock, blockRow, blockCol)) {
       console.log('cannot rotate block');
@@ -200,3 +215,22 @@ export function rotateBlock() {
     });
   };
 };
+
+export function removeCompletedRows() {
+    return (dispatch, getState) => {
+      const {
+        board: {
+          current: board,
+        },
+      } = getState();
+      const rows = getCompletedRows(board);
+      if (!rows.length) return rows;
+      dispatch({
+        type: 'REMOVE_ROW',
+        payload: {
+          board: removeRowsAndFill(board, rows),
+        }
+      });
+      return rows.length;
+    };
+}
