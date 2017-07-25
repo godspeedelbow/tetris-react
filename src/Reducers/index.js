@@ -6,6 +6,9 @@ import tetris, {
   addBlockToBoard,
 } from 'tetrisjs';
 
+import range from 'lodash/range';
+import shuffle from 'lodash/shuffle';
+
 const initialState = {};
 
 function boardReducer(state, action) {
@@ -145,12 +148,18 @@ export function tick() {
 export function addBlock() {
   return (dispatch, getState) => {
     const { board: { current: currentBoard, columns } } = getState();
-    const blockRow = 0;
-    const blockCol = Math.floor(Math.random() * columns);
+
     const randomBlockId = Math.floor(Math.random() * blocks.length);
     const block = blocks[randomBlockId];
 
-    if (!canAddBlockToBoard(currentBoard, block, blockRow, blockCol)) {
+    const blockRow = 0;
+    const randomColumns = shuffle(range(columns));
+    const blockCol = randomColumns.find(col => {
+      const fits = canAddBlockToBoard(currentBoard, block, blockRow, col) ;
+      console.log('***** col, fits', col, fits)
+      return fits;
+    });
+    if (blockCol === undefined) {
       console.log('cannot add random block to random location');
       return false;
     }
@@ -181,6 +190,10 @@ export function dropBlock() {
       }
     } = getState();
 
+    if (!block) {
+      return;
+    }
+
     let lowestRow = blockRow;
     while (canAddBlockToBoard(previousBoard, block, lowestRow + 1, blockCol)) {
       lowestRow++;
@@ -209,6 +222,10 @@ export function moveBlock(direction) {
         current: block,
       }
     } = getState();
+
+    if (!block) {
+      return;
+    }
 
     if (direction === 'down') {
       blockRow++;
