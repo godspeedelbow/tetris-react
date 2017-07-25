@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import logo from './logo.svg';
 
-const Score = (props) => {
-  console.log('***** props', props)
+const Score = ({ score }) => {
   return (
-    <div className="Score">{ props.score }</div>
+    <div className="Score">{ score }</div>
   );
 };
 

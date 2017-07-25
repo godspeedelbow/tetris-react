@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 
-import logo from './logo.svg';
-
 import Board from './Board';
 import Score from './Score';
 
 import {
   startGame,
   tick,
-} from './Reducers/game';
+} from '../Reducers/game';
 
 import {
   createBoard,
@@ -17,7 +15,7 @@ import {
   dropBlock,
   moveBlock,
   rotateBlock,
-} from './Reducers/board';
+} from '../Reducers/board';
 
 import KeyHandler, { KEYDOWN } from 'react-key-handler';
 
