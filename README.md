@@ -6,9 +6,12 @@ Tetris game built with React, Redux and [Tetrisjs](https://github.com/godspeedel
 
 - Make sure not whole board is re-rendered every time (use ImmutableJS?)
 
-- remove line when complete
+## Get started
 
-- points system
+- `npm i`
+
+- `npm start`
+
 
 ## Create React App
 

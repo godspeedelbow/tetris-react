@@ -46,7 +46,7 @@ export default function gameReducer(state, action) {
 
 export function startGame() {
   return (dispatch, getState) => {
-    dispatch(createBoard(10, 5));
+    dispatch(createBoard(20, 10));
 
     dispatch({
       type: 'START_GAME',

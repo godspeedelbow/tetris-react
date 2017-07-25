@@ -59,9 +59,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addBlock: (rows, cols) => {
-      dispatch(addBlock(rows, cols))
-    },
+    addBlock: (rows, cols) => dispatch(addBlock(rows, cols)),
     dropBlock: () => dispatch(dropBlock()),
     moveBlock: direction => dispatch(moveBlock(direction)),
     rotateBlock: () => dispatch(rotateBlock()),
