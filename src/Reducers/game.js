@@ -1,10 +1,11 @@
-import { addBlock, moveBlock, removeCompletedRows } from './board';
+import { createBoard, addBlock, moveBlock, removeCompletedRows } from './board';
 
 const initialGameState = {
+  level: 1,
   score: 0,
-  scoreSinceLastSpeedUp: 0,
+  scoreSinceLevelUp: 0,
   tickWait: 1000,
-  playing: false,
+  playing: 0, // game number
 };
 
 export default function gameReducer(state, action) {
@@ -13,22 +14,23 @@ export default function gameReducer(state, action) {
   }
   if (action.type === 'START_GAME') {
     return {
-      ...state,
-      playing: true,
+      ...initialGameState,
+      playing: initialGameState.playing + 1,
     };
   }
   if (action.type === 'END_GAME') {
     return {
       ...state,
-      playing: false,
+      playing: 0,
     };
   }
-  if (action.type === 'SPEED_UP') {
+  if (action.type === 'LEVEL_UP') {
     const { payload: { tickWait } } = action;
     return {
       ...state,
+      level: state.level + 1,
+      scoreSinceLevelUp: 0,
       tickWait,
-      scoreSinceLastSpeedUp: 0,
     };
   }
   if (action.type === 'INCREASE_SCORE') {
@@ -36,7 +38,7 @@ export default function gameReducer(state, action) {
     return {
       ...state,
       score: state.score + score,
-      scoreSinceLastSpeedUp: state.scoreSinceLastSpeedUp + score
+      scoreSinceLevelUp: state.scoreSinceLevelUp + score
     };
   }
   return state;
@@ -44,16 +46,19 @@ export default function gameReducer(state, action) {
 
 export function startGame() {
   return (dispatch, getState) => {
+    dispatch(createBoard(10, 5));
+
     dispatch({
       type: 'START_GAME',
     });
 
+    const { game: { playing: gameNumber } } = getState();
     scheduleTick();
     function scheduleTick() {
       const { game: { tickWait } } = getState();
       setTimeout(() => {
-        const { game: { playing } } = getState();
-        if (!playing) return;
+        const { game: { playing: activeGameNumber } } = getState();
+        if (activeGameNumber !== gameNumber) return;
 
         tick()(dispatch, getState);
         scheduleTick();
@@ -68,13 +73,13 @@ export function endGame() {
   };
 }
 
-export function speedUp() {
+export function levelUp() {
   return (dispatch, getState) => {
-    const { game: { tickWait, scoreSinceLastSpeedUp } } = getState();
-    if (scoreSinceLastSpeedUp < 1000) return;
+    const { game: { tickWait, scoreSinceLevelUp } } = getState();
+    if (scoreSinceLevelUp < 1000) return;
     const newTickWait = Math.max(tickWait - 100, 300);
     dispatch({
-      type: 'SPEED_UP',
+      type: 'LEVEL_UP',
       payload: {
         tickWait: newTickWait
       }
@@ -108,7 +113,7 @@ export function tick() {
       const removedRows = removeCompletedRows()(dispatch, getState);
       if (removedRows > 0) {
         dispatch(increaseScore(removedRows));
-        speedUp()(dispatch, getState);
+        levelUp()(dispatch, getState);
       }
       if (!addBlock()(dispatch, getState)) {
         console.log('GAME OVER');

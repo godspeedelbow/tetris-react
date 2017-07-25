@@ -4,6 +4,10 @@ export default function blockReducer(state, action) {
   if (typeof state === 'undefined') {
     return initialState;
   }
+  if (action.type === 'START_GAME') {
+    return {
+    };
+  }
   if (action.type === 'ADD_BLOCK') {
     const { block, blockId, blockRow, blockCol } = action.payload;
     return {

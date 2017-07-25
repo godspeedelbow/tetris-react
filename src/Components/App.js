@@ -6,11 +6,9 @@ import Score from './Score';
 
 import {
   startGame,
-  tick,
 } from '../Reducers/game';
 
 import {
-  createBoard,
   addBlock,
   dropBlock,
   moveBlock,
@@ -26,7 +24,6 @@ class App extends Component {
     this.rows = 10;
     this.columns = 5;
 
-    this.props.createBoard(this.rows, this.columns);
     this.props.startGame();
 
     this.addBlock = this.props.addBlock.bind(this);
@@ -35,7 +32,6 @@ class App extends Component {
     this.moveRight = this.props.moveBlock.bind(this, 'right');
     this.moveLeft = this.props.moveBlock.bind(this, 'left');
     this.moveDown = this.props.moveBlock.bind(this, 'down');
-    this.tick = this.props.tick.bind(this);
   }
   toggleMenu(event) {
     event.preventDefault();
@@ -49,8 +45,8 @@ class App extends Component {
         <KeyHandler keyEventName={KEYDOWN} keyValue="ArrowRight" onKeyHandle={this.moveRight} />
         <KeyHandler keyEventName={KEYDOWN} keyValue="ArrowUp" onKeyHandle={this.rotateBlock} />
         <KeyHandler keyEventName={KEYDOWN} keyValue=" " onKeyHandle={this.dropBlock} />
-        <Board />
         <Score />
+        <Board />
       </div>
     );
   }
@@ -63,16 +59,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    createBoard: (rows, cols) => {
-      dispatch(createBoard(rows, cols))
-    },
     addBlock: (rows, cols) => {
       dispatch(addBlock(rows, cols))
     },
     dropBlock: () => dispatch(dropBlock()),
     moveBlock: direction => dispatch(moveBlock(direction)),
     rotateBlock: () => dispatch(rotateBlock()),
-    tick: () => dispatch(tick()),
     startGame: () => dispatch(startGame()),
   }
 }
