@@ -5,15 +5,18 @@ import logo from './logo.svg';
 
 import Board from './Board';
 
-import boardReducer, {
+import {
+  startGame,
+  tick,
+} from './Reducers/game';
+
+import {
   createBoard,
   addBlock,
   dropBlock,
   moveBlock,
   rotateBlock,
-  tick,
-  startGame,
-} from './Reducers/index.js';
+} from './Reducers/board';
 
 import KeyHandler, { KEYDOWN } from 'react-key-handler';
 
