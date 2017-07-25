@@ -11,6 +11,38 @@ import shuffle from 'lodash/shuffle';
 
 const initialState = {};
 
+const initialGameState = {
+  tickWait: 1000,
+  playing: false,
+};
+
+function gameReducer(state, action) {
+  if (typeof state === 'undefined') {
+    return initialGameState;
+  }
+  if (action.type === 'START_GAME') {
+    return {
+      ...state,
+      playing: true,
+    }
+  }
+  if (action.type === 'END_GAME') {
+    return {
+      ...state,
+      playing: false,
+    }
+  }
+  if (action.type === 'SPEED_UP') {
+    const { payload: { tickWait } } = action;
+    return {
+      ...state,
+      tickWait,
+    }
+  }
+
+  return state;
+}
+
 function boardReducer(state, action) {
   if (typeof state === 'undefined') {
     return initialState;
@@ -110,13 +142,40 @@ export function createBoard(rows, columns) {
 
 export function startGame() {
   return (dispatch, getState) => {
+    dispatch({
+      type: 'START_GAME',
+    });
+
+    scheduleTick();
     function scheduleTick() {
+      const { game: { tickWait } } = getState();
       setTimeout(() => {
+        const { game: { playing } } = getState();
+        if (!playing) return;
+
         tick()(dispatch, getState);
         scheduleTick();
-      }, 1000);
+      }, tickWait);
     }
-    scheduleTick();
+  };
+}
+
+export function speedUp() {
+  return (dispatch, getState) => {
+    const { game: { tickWait } } = getState();
+    const newTickWait = Math.max(tickWait - 100, 300);
+    dispatch({
+      type: 'SPEED_UP',
+      payload: {
+        tickWait: newTickWait
+      }
+    });
+  };
+}
+
+export function endGame() {
+  return {
+    type: 'END_GAME',
   };
 }
 
@@ -132,15 +191,13 @@ export function tick() {
     } = getState();
 
     if (!board) {
-      console.log('no board defined');
-    }
-
-    if (!block) {
-      return addBlock()(dispatch, getState);
+      return console.log('no board defined');
     }
 
     if (!moveBlock('down')(dispatch, getState)) {
-      addBlock()(dispatch, getState);
+      if (!addBlock()(dispatch, getState)) {
+        console.log('GAME OVER')
+      }
     }
   };
 }
@@ -154,11 +211,7 @@ export function addBlock() {
 
     const blockRow = 0;
     const randomColumns = shuffle(range(columns));
-    const blockCol = randomColumns.find(col => {
-      const fits = canAddBlockToBoard(currentBoard, block, blockRow, col) ;
-      console.log('***** col, fits', col, fits)
-      return fits;
-    });
+    const blockCol = randomColumns.find(col => canAddBlockToBoard(currentBoard, block, blockRow, col));
     if (blockCol === undefined) {
       console.log('cannot add random block to random location');
       return false;
@@ -283,4 +336,5 @@ export function rotateBlock() {
 export default combineReducers({
   board: boardReducer,
   block: blockReducer,
+  game: gameReducer,
 });
