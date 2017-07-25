@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 
+import Cell from './Cell';
+
 class Board extends Component {
   render() {
     if (!this.props.board.current) {
@@ -11,9 +13,10 @@ class Board extends Component {
         {this.props.board.current.map((row, rowIndex) => (
           <div className="Row" key={`row-${rowIndex}`} style={styles.row}>
             {row.map((cell, colIndex) => (
-              <div className="Cell" key={`cell-${rowIndex}-${colIndex}`} style={styles.cell}>
-                {cell ? cell : '.'}
-              </div>
+              <Cell
+                key={`cell-${rowIndex}-${colIndex}`}
+                cell={cell}
+              />
             ))}
           </div>
         ))}
@@ -39,9 +42,5 @@ const styles = {
   },
   row: {
     clear: 'both',
-  },
-  cell: {
-    width: '20px',
-    float: 'left',
   },
 };
