@@ -5,13 +5,17 @@ import logo from './logo.svg';
 
 import Board from './Board';
 
-import boardReducer, { createBoard, addBlock, dropBlock, moveBlock, rotateBlock, tick, startGame } from './Reducers/index.js';
+import boardReducer, {
+  createBoard,
+  addBlock,
+  dropBlock,
+  moveBlock,
+  rotateBlock,
+  tick,
+  startGame,
+} from './Reducers/index.js';
 
-import tetris, {
-  blocks,
-  canAddBlockToBoard,
-  addBlockToBoard,
-} from 'tetrisjs';
+import KeyHandler, { KEYDOWN } from 'react-key-handler';
 
 class App extends Component {
   constructor(props) {
@@ -31,17 +35,19 @@ class App extends Component {
     this.moveDown = this.props.moveBlock.bind(this, 'down');
     this.tick = this.props.tick.bind(this);
   }
+  toggleMenu(event) {
+    event.preventDefault();
+    alert(event);
+  }
   render() {
     return (
       <div className="App">
+        <KeyHandler keyEventName={KEYDOWN} keyValue="ArrowDown" onKeyHandle={this.moveDown} />
+        <KeyHandler keyEventName={KEYDOWN} keyValue="ArrowLeft" onKeyHandle={this.moveLeft} />
+        <KeyHandler keyEventName={KEYDOWN} keyValue="ArrowRight" onKeyHandle={this.moveRight} />
+        <KeyHandler keyEventName={KEYDOWN} keyValue="ArrowUp" onKeyHandle={this.rotateBlock} />
+        <KeyHandler keyEventName={KEYDOWN} keyValue=" " onKeyHandle={this.dropBlock} />
         <Board />
-        <button className="AddBlock" onClick={this.addBlock} style={{clear:'both', float: 'left', color: 'red'}}>add block</button>
-        <button className="MoveBlockDown" onClick={this.moveDown} style={{clear:'both', float: 'left', color: 'gold'}}>down</button>
-        <button className="MoveBlockRight" onClick={this.moveRight} style={{clear:'both', float: 'left', color: 'green'}}>right</button>
-        <button className="MoveBlockLeft" onClick={this.moveLeft} style={{clear:'both', float: 'left', color: 'red'}}>left</button>
-        <button className="RotateBlock" onClick={this.rotateBlock} style={{clear:'both', float: 'left', color: 'purple'}}>rotate</button>
-        <button className="DropBlock" onClick={this.dropBlock} style={{clear:'both', float: 'left', color: 'orange'}}>drop</button>
-        <button className="Tick" onClick={this.tick} style={{clear:'both', float: 'left', color: 'blue'}}>tick</button>
       </div>
     );
   }
