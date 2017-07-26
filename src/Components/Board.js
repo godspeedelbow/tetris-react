@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 
-import Cell from './Cell';
 import GameOver from './GameOver';
+import Row from './Row';
 
 class Board extends Component {
   render() {
@@ -13,14 +13,11 @@ class Board extends Component {
       <div className="Board" style={styles.board}>
         <GameOver />
         {this.props.board.current.map((row, rowIndex) => (
-          <div className="Row" key={`row-${rowIndex}`} style={styles.row}>
-            {row.map((cell, colIndex) => (
-              <Cell
-                key={`cell-${rowIndex}-${colIndex}`}
-                cell={cell}
-              />
-            ))}
-          </div>
+          <Row
+            row={row}
+            rowIndex={rowIndex}
+            key={`row-${rowIndex}`}
+          />
         ))}
       </div>
     );
@@ -42,8 +39,5 @@ const styles = {
   board: {
     textAlign: 'center',
     float: 'left',
-  },
-  row: {
-    clear: 'both',
   },
 };
