@@ -6,6 +6,7 @@ const initialGameState = {
   scoreSinceLevelUp: 0,
   tickWait: 1000,
   playing: 0, // game number
+  paused: false,
 };
 
 export default function gameReducer(state, action) {
@@ -24,6 +25,19 @@ export default function gameReducer(state, action) {
       playing: 0,
     };
   }
+  if (action.type === 'PAUSE_GAME') {
+    return {
+      ...state,
+      paused: true,
+    };
+  }
+  if (action.type === 'RESUME_GAME') {
+    return {
+      ...state,
+      paused: false,
+    };
+  }
+
   if (action.type === 'LEVEL_UP') {
     const { payload: { tickWait } } = action;
     return {
@@ -57,10 +71,10 @@ export function startGame() {
     function scheduleTick() {
       const { game: { tickWait } } = getState();
       setTimeout(() => {
-        const { game: { playing: activeGameNumber } } = getState();
+        const { game: { playing: activeGameNumber, paused } } = getState();
         if (activeGameNumber !== gameNumber) return;
 
-        tick()(dispatch, getState);
+        !paused && tick()(dispatch, getState);
         scheduleTick();
       }, tickWait);
     }
@@ -72,6 +86,23 @@ export function endGame() {
     type: 'END_GAME',
   };
 }
+
+export function togglePlaying() {
+  return (dispatch, getState) => {
+    const { game: { paused, playing } } = getState();
+    if (!playing) return;
+    if (!paused) {
+      dispatch({
+        type: 'PAUSE_GAME',
+      });
+    } else {
+      dispatch({
+        type: 'RESUME_GAME',
+      });
+    }
+  };
+}
+
 
 export function levelUp() {
   return (dispatch, getState) => {

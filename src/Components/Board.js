@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 
+import Paused from './Paused';
 import GameOver from './GameOver';
 import Row from './Row';
 
@@ -11,6 +12,7 @@ class Board extends Component {
     }
     return (
       <div className="Board" style={styles.board}>
+        <Paused />
         <GameOver />
         {this.props.board.current.map((row, rowIndex) => (
           <Row

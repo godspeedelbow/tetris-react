@@ -23,10 +23,8 @@ export default connect(
 )(Score);
 
 const style = {
-  fontSize: '50px',
+  fontSize: '30px',
   fontWeight: 'bold',
-  padding: '10px',
-  // border: '1px solid black',
-  float: 'right',
-  height: '100px',
+  float: 'left',
+  paddingBottom: '20px'
 };
